@@ -1,38 +1,4 @@
-use ureq::Response;
-
-enum Method {
-    GET,
-    POST,
-    PUT,
-    PATCH,
-    DELETE,
-    OPTIONS,
-    HEAD,
-}
-
-impl Method {
-    fn value(&self) -> &str {
-        match *self {
-            Method::GET => "GET",
-            Method::POST => "POST",
-            Method::PUT => "PUT",
-            Method::PATCH => "PATCH",
-            Method::DELETE => "DELETE",
-            Method::OPTIONS => "OPTIONS",
-            Method::HEAD => "HEAD",
-        }
-    }
-}
-
-fn do_request(
-    path: String,
-    method: Method,
-    json: serde_json::Value,
-) -> Result<Response, ureq::Error> {
-    return ureq::request(&method.value(), &path)
-        .set("Content-Type", "application/json")
-        .send_json(&json);
-}
+mod request;
 
 fn main() -> Result<(), ureq::Error> {
     let json: serde_json::Value = ureq::json!({
@@ -44,7 +10,11 @@ fn main() -> Result<(), ureq::Error> {
         }
     });
 
-    let response = do_request("https://httpbin.org/anything".into(), Method::POST, json)?;
+    let response = request::do_request(
+        "https://httpbin.org/anything".into(),
+        request::Method::POST,
+        json,
+    )?;
 
     println!("Status: {} {}", &response.status(), &response.status_text());
 
