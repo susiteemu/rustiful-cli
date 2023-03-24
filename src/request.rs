@@ -31,5 +31,6 @@ pub fn do_request(
 ) -> Result<Response, ureq::Error> {
     return ureq::request(&method.value(), &path)
         .set("Content-Type", "application/json")
+        .set("Authorization", "Basic: asdasdasdasd")
         .send_json(&json);
 }

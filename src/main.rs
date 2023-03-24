@@ -1,20 +1,15 @@
 mod request;
+use std::env;
 
 fn main() -> Result<(), ureq::Error> {
-    let json: serde_json::Value = ureq::json!({
-        "name": "martin",
-        "rust": true,
-        "nested": {
-            "id": 1,
-            "name": "Homer"
-        }
-    });
+    let args: Vec<String> = env::args().collect();
 
-    let response = request::do_request(
-        "https://httpbin.org/anything".into(),
-        request::Method::POST,
-        json,
-    )?;
+    let url: &str = &args[1];
+    let payload: &str = &args[2];
+
+    let json = serde_json::from_str(payload).unwrap();
+
+    let response = request::do_request(url.into(), request::Method::GET, json)?;
 
     println!("Status: {} {}", &response.status(), &response.status_text());
 
